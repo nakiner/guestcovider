@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package app.service;
+
+import "app/api/service/levels.proto";
+import "app/api/service/fields.proto";
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/nakiner/golang-api/service";
+
+extend google.protobuf.ServiceOptions {
+  Levels levels = 898132;
+}
+
+extend google.protobuf.FieldOptions {
+  optional Options options = 898133;
+}

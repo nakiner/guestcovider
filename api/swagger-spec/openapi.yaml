@@ -1,0 +1,230 @@
+openapi: 3.0.0
+info:
+  title: guestcovider
+  version: '0.3.1'
+servers:
+  - url: http://guestcovider-d.k8s.devous.ru/
+    description: Optional server description, e.g. Main (Dev) server
+  - url: https://guestcovider-v1.k8s.devous.ru/
+    description: Optional server description, e.g. Main (Prod) server
+
+paths:
+  '/liveness':
+    get:
+      tags:
+        - HealthCheck
+      summary: returns a error if service doesn`t live.
+      operationId: HealthService.Liveness
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LivenessResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/readiness':
+    get:
+      tags:
+        - HealthCheck
+      summary: returns a error if service doesn`t ready.
+      operationId: HealthService.Readiness
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/version':
+    get:
+      tags:
+        - HealthCheck
+      summary: returns build time, last commit and version app
+      operationId: HealthService.Version
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/user':
+    put:
+      tags:
+        - user
+      operationId: UserService.UpdateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/user/search':
+    get:
+      tags:
+        - user
+      operationId: UserService.SearchUser
+      parameters:
+        - in: path
+          name: surname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchUserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+    LivenessRequest:
+      type: object
+    LivenessResponse:
+      type: object
+    ReadinessRequest:
+      type: object
+    ReadinessResponse:
+      type: object
+    SearchUserRequest:
+      type: object
+    SearchUserResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    Status:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+    UpdateData:
+      type: object
+      properties:
+        covidPass:
+          type: string
+        checkin:
+          type: boolean
+    UpdateUserRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        data:
+          $ref: '#/components/schemas/UpdateData'
+    UpdateUserResponse:
+      type: object
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+        company:
+          type: string
+        surname:
+          type: string
+        name:
+          type: string
+        guest:
+          type: string
+        covidPass:
+          type: string
+        rank:
+          type: string
+        contactPhone:
+          type: string
+        contactMail:
+          type: string
+        checkin:
+          type: boolean
+    VersionRequest:
+      type: object
+    VersionResponse:
+      type: object
+      properties:
+        buildTime:
+          type: string
+        version:
+          type: string
+        commit:
+          type: string

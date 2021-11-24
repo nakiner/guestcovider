@@ -1,0 +1,42 @@
+syntax = "proto3";
+package guestcoviderpb;
+option go_package = "internal/guestcoviderpb";
+
+import "guestcovider-status.proto";
+
+message User {
+  uint64 id = 1;
+  string status = 2;
+  string company = 3;
+  string surname = 4;
+  string name = 5;
+  string guest = 6;
+  string covid_pass = 7;
+  string rank = 8;
+  string contact_phone = 9;
+  string contact_mail = 10;
+  bool checkin = 11;
+}
+
+message UpdateData {
+  string covid_pass = 2;
+  bool checkin = 11;
+}
+
+message SearchUserRequest {
+  string surname = 1;
+}
+
+message SearchUserResponse {
+  Status status = 1;
+  repeated User data = 2;
+}
+
+message UpdateUserRequest {
+  uint64 id = 1;
+  UpdateData data = 2;
+}
+
+message UpdateUserResponse {
+  Status status = 1;
+}

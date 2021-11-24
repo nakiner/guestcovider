@@ -1,0 +1,12 @@
+version: "3.5"
+services:
+
+  front:
+    build:
+      context: .
+      args:
+        GITLAB_DEPLOYMENT_PRIVATE_KEY: ${GITLAB_DEPLOYMENT_PRIVATE_KEY}
+    environment:
+      GUEST_COVIDER_CONFIG:
+    ports:
+      - "8080:80"

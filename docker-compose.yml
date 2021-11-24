@@ -1,0 +1,58 @@
+version: "3.5"
+services:
+
+  postgres:
+    image: postgres
+    volumes:
+      - data-volume:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=guestcovider
+  app:
+    build:
+      context: .
+      args:
+        GITLAB_DEPLOYMENT_PRIVATE_KEY: ${GITLAB_DEPLOYMENT_PRIVATE_KEY}
+    depends_on:
+      - postgres
+    environment:
+      GUESTCOVIDER_CONFIG:
+      GUESTCOVIDER_SERVER_HTTP_PORT: 8080
+      GUESTCOVIDER_SERVER_HTTP_TIMEOUT_SEC: 86400
+      GUESTCOVIDER_SERVER_GRPC_PORT: 9194
+      GUESTCOVIDER_SERVER_GRPC_TIMEOUT_SEC: 86400
+      GUESTCOVIDER_POSTGRES_HOST: postgres
+      GUESTCOVIDER_POSTGRES_PORT: 5432
+      GUESTCOVIDER_POSTGRES_USER: postgres
+      GUESTCOVIDER_POSTGRES_PASSWORD: postgres
+      GUESTCOVIDER_POSTGRES_DATABASE_NAME: guestcovider
+      GUESTCOVIDER_POSTGRES_SECURE: disable
+      GUESTCOVIDER_LOGGER_LEVEL: info
+      GUESTCOVIDER_LOGGER_TIME_FORMAT: "2006-01-02T15:04:05.999999999"
+      GUESTCOVIDER_SENTRY_ENABLED: "false"
+      GUESTCOVIDER_SENTRY_DSN: "test"
+      GUESTCOVIDER_SENTRY_ENVIRONMENT: local
+      GUESTCOVIDER_TRACER_ENABLED: "false"
+      GUESTCOVIDER_TRACER_HOST: 127.0.0.1
+      GUESTCOVIDER_TRACER_PORT: 5775
+      GUESTCOVIDER_TRACER_NAME: export
+      GUESTCOVIDER_METRICS_ENABLED: "false"
+      GUESTCOVIDER_METRICS_PORT: 9153
+      GUESTCOVIDER_LIMITER_ENABLED: "false"
+      GUESTCOVIDER_LIMITER_LIMIT: 10000
+    ports:
+      - "8080:8080"
+  frontend:
+    build:
+      context: web/.
+      args:
+        GITLAB_DEPLOYMENT_PRIVATE_KEY: ${GITLAB_DEPLOYMENT_PRIVATE_KEY}
+    depends_on:
+      - app
+    ports:
+      - "80:8080"
+volumes:
+  data-volume:

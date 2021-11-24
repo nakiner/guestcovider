@@ -1,0 +1,101 @@
+syntax = "proto3";
+package guestcoviderpb;
+option go_package = "internal/guestcoviderpb";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "app/api/service/annotations.proto";
+
+import "guestcovider-health.proto";
+import "guestcovider-user.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    title: "Covider check service";
+    version: "1.0";
+  };
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+  responses: {
+    key: "404";
+    value: {
+      description: "Returned when the resource does not exist.";
+      schema: {
+        json_schema: {
+          type: STRING;
+        }
+      }
+    }
+  }
+};
+
+service HealthService {
+  // returns a error if service doesn`t live.
+  rpc Liveness (LivenessRequest) returns (LivenessResponse) {
+    option (google.api.http) = {
+      get: "/liveness"
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      tags: "HealthCheck"
+    };
+  }
+
+  // returns a error if service doesn`t ready.
+  rpc Readiness (ReadinessRequest) returns (ReadinessResponse) {
+    option (google.api.http) = {
+      get: "/readiness"
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      tags: "HealthCheck"
+    };
+  }
+
+  // returns build time, last commit and version app
+  rpc Version (VersionRequest) returns (VersionResponse) {
+    option (google.api.http) = {
+      get: "/version"
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      tags: "HealthCheck"
+    };
+  }
+  option (app.service.levels) = {
+    http: {enabled: true}
+    grpc: {enabled: true}
+    metric: {enabled: true}
+    sentry: {enabled: true}
+    logging: {enabled: true}
+    tracing: {enabled: true}
+    queue: {enabled: false}
+  };
+}
+
+service UserService {
+  rpc SearchUser (SearchUserRequest) returns (SearchUserResponse) {
+    option (google.api.http) = {
+      get: "/user/search"
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      tags: "user"
+    };
+  }
+
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/user"
+    };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      tags: "user"
+    };
+  }
+  option (app.service.levels) = {
+    http: {enabled: true}
+    grpc: {enabled: true}
+    metric: {enabled: true}
+    sentry: {enabled: true}
+    logging: {enabled: true}
+    tracing: {enabled: true}
+    queue: {enabled: false}
+  };
+}

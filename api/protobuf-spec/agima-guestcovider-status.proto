@@ -1,0 +1,8 @@
+syntax = "proto3";
+package guestcoviderpb;
+option go_package = "internal/guestcoviderpb";
+
+message Status {
+  bool status = 1;
+  string message = 2;
+}
